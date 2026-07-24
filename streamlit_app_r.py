@@ -128,8 +128,6 @@ div[data-baseweb="input"]:hover{
 
 /* Analyze Button */
 
-/* Button */
-
 div.stButton > button{
 
     width:100%;
@@ -140,9 +138,9 @@ div.stButton > button{
 
     background:
     linear-gradient(
-    90deg,
-    #00f5b4,
-    #00c896
+        90deg,
+        #00f5b4,
+        #00c896
     );
 
     color:black;
@@ -160,8 +158,6 @@ div.stButton > button:hover{
     box-shadow:
     0px 0px 40px rgba(0,255,180,0.8);
 }
-
-/* Result */
 
 /* Result Card */
 
