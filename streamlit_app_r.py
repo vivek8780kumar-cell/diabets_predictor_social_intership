@@ -1,623 +1,287 @@
 import streamlit as st
 from predict import predict_diabetes
 
-# ==========================
-# PAGE CONFIG
-# ==========================
-
 st.set_page_config(
-    page_title="AI Diabetes Intelligence",
+    page_title="AI Diabetes Dashboard",
     page_icon="🩺",
-    layout="wide",
-    initial_sidebar_state="expanded"
+    layout="wide"
 )
 
-# ==========================
-# CUSTOM CSS
-# ==========================
+# ================= CSS ================= #
 
 st.markdown("""
 <style>
 
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap');
-
-html,body,[class*="css"]{
-    font-family:'Poppins',sans-serif;
-}
-
-/* Background */
-
 .stApp{
-
-background:
-radial-gradient(circle at top left,#00ffb320,transparent 35%),
-radial-gradient(circle at bottom right,#00c89620,transparent 35%),
-linear-gradient(135deg,#030712,#071827,#03151b);
-
-background-attachment:fixed;
-
-color:white;
-
+    background:
+    radial-gradient(circle at top left,
+    rgba(0,255,180,0.15), transparent 35%),
+    radial-gradient(circle at bottom right,
+    rgba(0,255,180,0.12), transparent 35%),
+    #020814;
+    color:white;
 }
-
-/* Hide Streamlit default */
 
 header{
-visibility:hidden;
+    visibility:hidden;
 }
-
-footer{
-visibility:hidden;
-}
-
-#MainMenu{
-visibility:hidden;
-}
-
-/* Container */
 
 .block-container{
-
-padding-top:1rem;
-padding-left:2rem;
-padding-right:2rem;
-
-max-width:1450px;
-
+    padding-top:1rem;
 }
 
 /* Hero */
 
 .hero{
-
-text-align:center;
-
-padding-top:20px;
-
-padding-bottom:30px;
-
+    text-align:center;
+    padding:20px;
 }
 
 .hero-title{
-
-font-size:65px;
-
-font-weight:800;
-
-color:#00F5B4;
-
-text-shadow:
-
-0 0 8px #00F5B4,
-
-0 0 18px #00F5B4,
-
-0 0 35px #00F5B4;
-
+    font-size:65px;
+    font-weight:800;
+    color:#00f5b4;
+    text-shadow:0px 0px 30px #00f5b4;
 }
 
 .hero-sub{
-
-font-size:19px;
-
-color:#cbd5e1;
-
+    color:#b0bec5;
+    font-size:20px;
 }
 
-/* Online Badge */
-
-.badge{
-
-display:inline-block;
-
-margin-top:15px;
-
-padding:8px 22px;
-
-border-radius:30px;
-
-background:#0f172a;
-
-border:1px solid #00F5B4;
-
-color:#00F5B4;
-
-font-weight:600;
-
-}
-
-/* Glass Card */
+/* Cards */
 
 .glass{
+    background:rgba(255,255,255,0.05);
+    border:1px solid rgba(255,255,255,0.08);
+    backdrop-filter:blur(18px);
 
-background:rgba(255,255,255,.05);
+    border-radius:25px;
+    padding:30px;
 
-backdrop-filter:blur(16px);
-
-border:1px solid rgba(255,255,255,.08);
-
-border-radius:25px;
-
-padding:25px;
-
-box-shadow:
-
-0 10px 30px rgba(0,0,0,.35),
-
-0 0 20px rgba(0,245,180,.15);
-
-transition:.3s;
-
+    box-shadow:
+    0px 0px 40px rgba(0,255,180,0.12);
 }
 
-.glass:hover{
-
-transform:translateY(-4px);
-
-box-shadow:
-
-0 15px 35px rgba(0,0,0,.4),
-
-0 0 25px rgba(0,245,180,.25);
-
-}
-
-/* Metric Cards */
+/* Metric cards */
 
 .metric{
-
-background:rgba(255,255,255,.05);
-
-padding:20px;
-
-border-radius:22px;
-
-text-align:center;
-
-border:1px solid rgba(0,245,180,.2);
-
-transition:.3s;
-
-}
-
-.metric:hover{
-
-transform:scale(1.04);
-
-border-color:#00F5B4;
-
-box-shadow:0 0 18px rgba(0,245,180,.3);
-
-}
-
-/* Titles */
-
-.section-title{
-
-font-size:34px;
-
-font-weight:700;
-
-color:white;
-
-margin-bottom:20px;
-
+    background:rgba(255,255,255,0.04);
+    padding:20px;
+    border-radius:20px;
+    text-align:center;
+    border:1px solid rgba(0,255,180,0.2);
 }
 
 /* Labels */
 
 label,
-
 [data-testid="stWidgetLabel"] p{
-
-font-size:17px!important;
-
-font-weight:700!important;
-
-color:#00F5B4!important;
-
+    color:#00f5b4 !important;
+    font-size:18px !important;
+    font-weight:700 !important;
 }
 
-/* Inputs */
+/* Slider value */
 
-div[data-baseweb="input"]{
-
-background:#101826!important;
-
-border:1px solid rgba(0,245,180,.35)!important;
-
-border-radius:14px!important;
-
+.stSlider div{
+    color:white !important;
 }
 
-div[data-baseweb="input"]:hover{
+/* Progress */
 
-border-color:#00F5B4!important;
-
-box-shadow:0 0 10px rgba(0,245,180,.4);
-
-}
-
-div[data-baseweb="input"] input{
-
-color:white!important;
-
-font-size:18px!important;
-
-font-weight:600!important;
-
--webkit-text-fill-color:white!important;
-
-}
-
-/* Plus Minus */
-
-button[kind="secondary"]{
-
-background:#101826!important;
-
-color:#00F5B4!important;
-
+.stProgress > div > div{
+    background:#00f5b4;
 }
 
 /* Button */
 
-div.stButton>button{
+div.stButton > button{
 
-width:100%;
+    width:100%;
+    height:60px;
 
-height:60px;
+    border:none;
+    border-radius:18px;
 
-border:none;
+    background:
+    linear-gradient(
+    90deg,
+    #00f5b4,
+    #00c896
+    );
 
-border-radius:18px;
+    color:black;
+    font-size:20px;
+    font-weight:bold;
 
-background:linear-gradient(90deg,#00F5B4,#00C896);
-
-font-size:20px;
-
-font-weight:700;
-
-color:#041017;
-
-transition:.3s;
-
-box-shadow:0 0 25px rgba(0,245,180,.45);
-
+    box-shadow:
+    0px 0px 25px rgba(0,255,180,0.5);
 }
 
-div.stButton>button:hover{
+div.stButton > button:hover{
 
-transform:scale(1.02);
+    transform:scale(1.02);
 
-box-shadow:0 0 35px rgba(0,245,180,.7);
-
+    box-shadow:
+    0px 0px 40px rgba(0,255,180,0.8);
 }
 
-/* Sidebar */
-
-section[data-testid="stSidebar"]{
-
-background:#07131f;
-
-border-right:1px solid rgba(0,245,180,.15);
-
-}
-
-section[data-testid="stSidebar"] h1,
-
-section[data-testid="stSidebar"] h2,
-
-section[data-testid="stSidebar"] h3{
-
-color:#00F5B4;
-
-}
-
-/* Result Card */
+/* Result */
 
 .result{
-
-padding:30px;
-
-border-radius:22px;
-
-text-align:center;
-
-background:rgba(255,255,255,.05);
-
-border:1px solid rgba(0,245,180,.2);
-
-}
-
-/* Footer */
-
-.footer{
-
-margin-top:50px;
-
-padding:20px;
-
-text-align:center;
-
-color:#94a3b8;
-
-font-size:15px;
-
-}
-
-/* Mobile */
-
-@media(max-width:768px){
-
-.hero-title{
-
-font-size:40px;
-
-}
-
-.section-title{
-
-font-size:25px;
-
-}
-
+    padding:35px;
+    border-radius:25px;
+    text-align:center;
+    background:rgba(255,255,255,0.05);
 }
 
 </style>
-
 """, unsafe_allow_html=True)
-# =====================================================
-# SIDEBAR
-# =====================================================
 
-with st.sidebar:
-
-    st.markdown("# 🩺 AI Health Assistant")
-
-    st.success("🟢 AI Model Online")
-
-    st.markdown("---")
-
-    st.markdown("### 🏠 Dashboard")
-    st.markdown("### 📊 Prediction")
-    st.markdown("### 📈 Analytics")
-    st.markdown("### 📄 Reports")
-    st.markdown("### 🧠 AI Insights")
-    st.markdown("### ⚙ Settings")
-
-    st.markdown("---")
-
-    st.markdown("### 🤖 Model Information")
-
-    st.info("""
-**Model**
-
-Random Forest Classifier
-
-**Version**
-
-2.1
-
-**Accuracy**
-
-89%
-
-**Prediction Time**
-
-0.02 sec
-
-**Status**
-
-🟢 Active
-""")
-
-    st.markdown("---")
-
-    st.caption("Made with ❤️ using Streamlit")
-
-
-# =====================================================
-# HERO SECTION
-# =====================================================
+# ================= HERO ================= #
 
 st.markdown("""
-<div class="hero">
-
-<div class="hero-title">
-
-🧬 AI Diabetes Intelligence
-
+<div class='hero'>
+<div class='hero-title'>
+AI Diabetes Dashboard
 </div>
 
-<div class="hero-sub">
-
-Advanced Machine Learning Clinical Risk Assessment Platform
-
+<div class='hero-sub'>
+Advanced Clinical Risk Assessment System
 </div>
-
-<div class="badge">
-
-🟢 AI Prediction Engine Online
-
-</div>
-
 </div>
 """, unsafe_allow_html=True)
 
+# ================= METRICS ================= #
 
-# =====================================================
-# DASHBOARD CARDS
-# =====================================================
+m1, m2, m3, m4 = st.columns(4)
 
-c1,c2,c3,c4,c5,c6 = st.columns(6)
+with m1:
+    st.markdown("""
+    <div class='metric'>
+    <h4>Parameters</h4>
+    <h2>8</h2>
+    </div>
+    """, unsafe_allow_html=True)
 
-cards = [
-("🧬","Parameters","8"),
-("🤖","AI Model","Random Forest"),
-("🎯","Accuracy","89%"),
-("⚡","Speed","0.02 s"),
-("👨‍⚕","Patients","12,450"),
-("🟢","Status","ONLINE")
-]
+with m2:
+    st.markdown("""
+    <div class='metric'>
+    <h4>AI Model</h4>
+    <h2>ML</h2>
+    </div>
+    """, unsafe_allow_html=True)
 
-cols=[c1,c2,c3,c4,c5,c6]
+with m3:
+    st.markdown("""
+    <div class='metric'>
+    <h4>Accuracy</h4>
+    <h2>89%</h2>
+    </div>
+    """, unsafe_allow_html=True)
 
-for col,(icon,title,value) in zip(cols,cards):
-
-    with col:
-
-        st.markdown(f"""
-        <div class="metric">
-
-        <h2>{icon}</h2>
-
-        <h4>{title}</h4>
-
-        <h2>{value}</h2>
-
-        </div>
-        """,unsafe_allow_html=True)
+with m4:
+    st.markdown("""
+    <div class='metric'>
+    <h4>Status</h4>
+    <h2>LIVE</h2>
+    </div>
+    """, unsafe_allow_html=True)
 
 st.write("")
 
+# ================= MAIN ================= #
 
-# =====================================================
-# MAIN LAYOUT
-# =====================================================
-
-left,right=st.columns([1.6,1])
-
-
-# =====================================================
-# INPUT FORM
-# =====================================================
+left, right = st.columns([1.5,1])
 
 with left:
 
-    st.markdown("<div class='glass'>",unsafe_allow_html=True)
+    st.markdown(
+    "<div class='glass'>",
+    unsafe_allow_html=True)
 
-    st.markdown("""
-    <div class="section-title">
+    st.subheader("🩺 Patient Clinical Information")
 
-    🩺 Patient Clinical Information
+    c1, c2 = st.columns(2)
 
-    </div>
-    """,unsafe_allow_html=True)
+    with c1:
 
-    a,b=st.columns(2)
+        preg = st.slider(
+            "Pregnancies",
+            0,20,0
+        )
 
-    with a:
+        glucose = st.slider(
+            "Glucose Level",
+            0,300,100
+        )
 
-        preg=st.number_input(
-        "Pregnancies",
-        min_value=0,
-        max_value=20,
-        value=0)
+        bp = st.slider(
+            "Blood Pressure",
+            0,200,70
+        )
 
-        glucose=st.number_input(
-        "Glucose Level",
-        min_value=0,
-        max_value=300,
-        value=100)
+        skin = st.slider(
+            "Skin Thickness",
+            0,100,20
+        )
 
-        bp=st.number_input(
-        "Blood Pressure",
-        min_value=0,
-        max_value=200,
-        value=70)
+    with c2:
 
-        skin=st.number_input(
-        "Skin Thickness",
-        min_value=0,
-        max_value=100,
-        value=20)
+        insulin = st.slider(
+            "Insulin",
+            0,900,80
+        )
 
-    with b:
+        bmi = st.slider(
+            "BMI",
+            0.0,70.0,25.0
+        )
 
-        insulin=st.number_input(
-        "Insulin",
-        min_value=0,
-        max_value=900,
-        value=80)
+        dpf = st.slider(
+            "Diabetes Pedigree Function",
+            0.0,3.0,0.5
+        )
 
-        bmi=st.number_input(
-        "BMI",
-        min_value=0.0,
-        max_value=70.0,
-        value=25.0,
-        format="%.2f")
+        age = st.slider(
+            "Age",
+            1,120,30
+        )
 
-        dpf=st.number_input(
-        "Diabetes Pedigree Function",
-        min_value=0.0,
-        max_value=3.0,
-        value=0.500,
-        format="%.3f")
+    predict_btn = st.button(
+        "🚀 Analyze Health Risk"
+    )
 
-        age=st.number_input(
-        "Age",
-        min_value=1,
-        max_value=120,
-        value=30)
-
-    st.write("")
-
-    predict_btn=st.button("🚀 Analyze Health Risk")
-
-    st.markdown("</div>",unsafe_allow_html=True)
-
-
-# =====================================================
-# AI ANALYTICS PANEL
-# =====================================================
+    st.markdown("</div>",
+    unsafe_allow_html=True)
 
 with right:
 
-    st.markdown("<div class='glass'>",unsafe_allow_html=True)
-
     st.markdown("""
-    <div class="section-title">
+    <div class='glass'>
 
+    <h2 style='color:#00f5b4'>
     🤖 AI Analytics
+    </h2>
+
+    <br>
+
+    ✔ Machine Learning Prediction<br><br>
+
+    ✔ Diabetes Risk Assessment<br><br>
+
+    ✔ Confidence Scoring<br><br>
+
+    ✔ Health Analytics Dashboard<br><br>
+
+    ✔ Clinical Decision Support
 
     </div>
-    """,unsafe_allow_html=True)
+    """,
+    unsafe_allow_html=True)
 
-    st.metric(
-        "Prediction Engine",
-        "Random Forest"
-    )
-
-    st.metric(
-        "Accuracy",
-        "89%"
-    )
-
-    st.metric(
-        "Processing Time",
-        "0.02 sec"
-    )
-
-    st.metric(
-        "Model Version",
-        "v2.1"
-    )
-
-    st.metric(
-        "Status",
-        "🟢 Active"
-    )
-
-    st.metric(
-        "Report",
-        "Available"
-    )
-
-    st.markdown("</div>",unsafe_allow_html=True)
-    # =====================================================
-# AI PREDICTION
-# =====================================================
+# ================= RESULT ================= #
 
 if predict_btn:
 
@@ -633,225 +297,62 @@ if predict_btn:
     ])
 
     st.write("")
-    st.markdown("## 🧠 AI Prediction Report")
+    st.subheader("🧠 Prediction Result")
 
     st.progress(float(probability))
 
-    col1, col2 = st.columns([2,1])
+    if prediction == 1:
 
-    with col1:
+        st.markdown(f"""
+        <div class='result'
+        style='border:2px solid #ff4d4d;'>
 
-        if prediction == 1:
+        <h1 style='color:#ff4d4d'>
+        ⚠ High Diabetes Risk
+        </h1>
 
-            st.markdown(f"""
-            <div class='result'
-            style='border:2px solid #ff4d4d;
-            box-shadow:0 0 25px rgba(255,0,0,.35);'>
+        <h2>
+        Confidence:
+        {probability*100:.2f}%
+        </h2>
 
-            <h1 style='color:#ff4d4d'>
-            ⚠ HIGH DIABETES RISK
-            </h1>
+        </div>
+        """,
+        unsafe_allow_html=True)
 
-            <h2>
-            Confidence : {probability*100:.2f}%
-            </h2>
+    else:
 
-            <hr>
+        st.markdown(f"""
+        <div class='result'
+        style='border:2px solid #00ff99;'>
 
-            <h3>AI Recommendation</h3>
+        <h1 style='color:#00ff99'>
+        ✅ Low Diabetes Risk
+        </h1>
 
-            <p style="font-size:18px">
+        <h2>
+        Confidence:
+        {probability*100:.2f}%
+        </h2>
 
-            • Consult a physician soon.<br>
+        </div>
+        """,
+        unsafe_allow_html=True)
 
-            • Reduce sugar intake.<br>
+# ================= SIDEBAR ================= #
 
-            • Exercise at least 30 minutes daily.<br>
+st.sidebar.title("🤖 AI Health Assistant")
 
-            • Maintain healthy body weight.<br>
+st.sidebar.info("""
+Advanced AI-powered health analytics dashboard.
 
-            • Monitor blood glucose regularly.<br>
+Features:
 
-            • Follow a balanced diet.
+• Diabetes Prediction  
+• Risk Analytics  
+• Confidence Score  
+• AI Decision Support  
+• Clinical Dashboard
+""")
 
-            </p>
-
-            </div>
-
-            """, unsafe_allow_html=True)
-
-        else:
-
-            st.markdown(f"""
-            <div class='result'
-            style='border:2px solid #00ff99;
-            box-shadow:0 0 25px rgba(0,255,150,.35);'>
-
-            <h1 style='color:#00ff99'>
-            ✅ LOW DIABETES RISK
-            </h1>
-
-            <h2>
-            Confidence : {probability*100:.2f}%
-            </h2>
-
-            <hr>
-
-            <h3>AI Recommendation</h3>
-
-            <p style="font-size:18px">
-
-            • Continue healthy eating.<br>
-
-            • Exercise regularly.<br>
-
-            • Drink enough water.<br>
-
-            • Maintain normal BMI.<br>
-
-            • Get annual health checkups.<br>
-
-            • Continue healthy lifestyle.
-
-            </p>
-
-            </div>
-
-            """, unsafe_allow_html=True)
-
-    # =============================================
-    # RIGHT ANALYTICS
-    # =============================================
-
-    with col2:
-
-        st.markdown("### 📊 Prediction Summary")
-
-        st.metric(
-            "Risk",
-            "High" if prediction else "Low"
-        )
-
-        st.metric(
-            "Confidence",
-            f"{probability*100:.2f}%"
-        )
-
-        st.metric(
-            "Model",
-            "Random Forest"
-        )
-
-        st.metric(
-            "Prediction Time",
-            "0.02 sec"
-        )
-
-        st.metric(
-            "Status",
-            "Completed"
-        )
-
-        st.metric(
-            "Recommendation",
-            "Generated"
-        )
-
-    st.write("")
-
-    # =============================================
-    # HEALTH SCORE
-    # =============================================
-
-    score = int((1 - probability) * 100) if prediction == 0 else int((1 - probability) * 40)
-
-    st.markdown("### ❤️ Overall Health Score")
-
-    st.progress(score / 100)
-
-    st.success(f"Health Score : {score}/100")
-
-    # =============================================
-    # PARAMETER SUMMARY
-    # =============================================
-
-    st.write("")
-    st.markdown("## 📋 Patient Summary")
-
-    c1, c2, c3, c4 = st.columns(4)
-
-    c1.metric("Age", age)
-    c2.metric("BMI", bmi)
-    c3.metric("Glucose", glucose)
-    c4.metric("Blood Pressure", bp)
-
-    st.write("")
-
-    # =============================================
-    # DOWNLOAD REPORT
-    # =============================================
-
-    report = f"""
-AI Diabetes Prediction Report
-
-Prediction :
-{"High Diabetes Risk" if prediction else "Low Diabetes Risk"}
-
-Confidence :
-{probability*100:.2f} %
-
-Age : {age}
-
-BMI : {bmi}
-
-Glucose : {glucose}
-
-Blood Pressure : {bp}
-
-Insulin : {insulin}
-
-Skin Thickness : {skin}
-
-Pregnancies : {preg}
-
-Diabetes Pedigree Function : {dpf}
-
-Generated using AI Diabetes Intelligence Dashboard
-"""
-
-    st.download_button(
-        "📄 Download Report",
-        report,
-        file_name="Diabetes_Report.txt",
-        mime="text/plain"
-    )
-
-# =====================================================
-# FOOTER
-# =====================================================
-
-st.markdown("""
-<div class='footer'>
-
-<hr>
-
-<h3 style='color:#00F5B4;'>
-
-🧬 AI Diabetes Intelligence Platform
-
-</h3>
-
-<p>
-
-Powered by Streamlit • Scikit-Learn • Machine Learning • Python
-
-</p>
-
-<p>
-
-© 2026 Vivek Kumar | Advanced Clinical Risk Assessment Dashboard
-
-</p>
-
-</div>
-""", unsafe_allow_html=True)
+st.sidebar.success("Model Status : Active ✅")
